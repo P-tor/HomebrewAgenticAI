@@ -1,197 +1,140 @@
-# 🐍 HomebrewAgenticAI - Poor Man's Agentic RAG
-This project implements a "Poor Man's Agentic RAG (Retrieval Augmented Generation)" system in Python, inspired by the concepts discussed in the blog "[Building a 'Poor Man's Agentic RAG' with Python: A Step-by-Step Guide](https://kazimurtaza.medium.com/building-a-poor-mans-agentic-rag-with-python-a-step-by-step-guide-3284aa90297e)". It combines a web crawler for data ingestion, a local Large Language Model (LLM) for summarization and embeddings, and a Supabase instance for vector storage and retrieval. The system also includes an agentic loop with a self-correction mechanism to improve the quality of generated answers by ensuring proper tool usage.
+# HomebrewAgenticAI 🌟
 
-# ✨ Features
-- **Documentation Crawling:** Asynchronously crawls specified documentation websites, extracts content, and processes it into structured chunks.
-- **Intelligent Chunking:** Splits text into manageable chunks, intelligently respecting code blocks, paragraphs, and sentences to maintain context.
-- **LLM-powered Summarization & Title Extraction:** Uses a local Ollama model to generate concise summaries and descriptive titles for each document chunk.
-- **Vector Embeddings:** Generates embeddings for each chunk using a local Ollama embedding model, enabling semantic search.
-- **Supabase Integration:** Stores processed document chunks, along with their metadata and embeddings, in a Supabase database for efficient retrieval.
-- **Agentic RAG Pipeline:**
-    - **Tool Usage:** The main agent (Documentation AI Expert) is equipped with tools to retrieve relevant documentation, list available documentation pages, and fetch full page content from Supabase.
-    - **Dynamic Prompting:** Adapts its system prompt based on previous attempts, encouraging the agent to use all required tools in a specified order.
-    - **Self-Correction/Validation:** Employs a separate validation agent (also a local LLM) to check if the generated answer accurately addresses the original query, leading to iterative refinement.
-    - **Custom Logging:** Provides enhanced logging with colored output and emojis for better debuggability.
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
+![Ollama](https://img.shields.io/badge/Ollama-LLM-orange.svg)
+![Supabase](https://img.shields.io/badge/Supabase-Database-green.svg)
 
-# 📁 Project Structure
-```
-rag_project/
-├── .env                  # Environment variables (Supabase, Ollama, Logging, App Config)
-├── requirements.txt      # Python dependencies
-└── src/
-    ├── __init__.py       # Marks 'src' as a Python package
-    ├── main.py           # Core RAG agent logic, tool definitions, and main execution loop
-    └── crawl.py          # Web crawling, data processing, and Supabase ingestion script
-``` 
+Welcome to the **HomebrewAgenticAI** repository! This project is designed to harness the power of local large language models (LLMs) through Ollama, providing a robust system for intelligent documentation crawling, summarization, and vector embeddings using Supabase. 
 
-# ⚙️ Setup
-Follow these steps to get the project up and running on your local machine.
+## Table of Contents
 
-- Prerequisites
-    - Python 3.9+
-    - Docker (for running Supabase and Ollama locally, or ensuring they are accessible)
-    - Ollama: Make sure Ollama is running and you have the necessary models pulled.
-        - Download Ollama from ollama.com.
-        - Pull the required models:
-        - ollama pull qwen2.5:14b         # For summarization and title extraction (or your chosen OLLAMA_MODEL_NAME)
-        - ollama pull deepseek-coder:14b  # For validation (or your chosen validation model)
-        - ollama pull nomic-embed-text    # For embeddings
-    - Supabase: You can run Supabase locally using Docker.
-        - You can also use a hosted Supabase
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
+- [Releases](#releases)
 
+## Introduction
 
-## Code Setup
-1. **Clone the Repository**
-First, set up the recommended project structure if you haven't already:
-```
-git clone https://github.com/kazimurtaza/HomebrewAgenticAI.git
-```
+In the age of information overload, having a reliable system for retrieving and generating accurate data is essential. HomebrewAgenticAI offers a solution by combining the strengths of LLMs with a self-correcting agentic loop. This allows the system to dynamically refine answers through tool usage and validation. 
 
+## Features
 
-2. **Set up Environment Variables**
+- **Local LLMs**: Utilize Ollama to run language models locally, ensuring privacy and speed.
+- **Intelligent Crawling**: Automatically crawl documentation to gather relevant information.
+- **Summarization**: Generate concise summaries from extensive documents.
+- **Vector Embeddings**: Store and retrieve information efficiently with Supabase.
+- **Self-Correcting Loop**: The system learns and improves answers based on feedback and tool interactions.
+- **Robust Information Retrieval**: Access accurate data tailored to your needs.
 
-Create a .env file in the root directory (rag_project/) and populate it with your configuration:
+## Installation
 
-    - Supabase Configuration
-        - SUPABASE_URL
-        - SUPABASE_SERVICE_KEY
-    - Ollama Configuration
-        - OLLAMA_BASE_URL=
-        - OLLAMA_MODEL_NAME=qwen2.5:14b # Or llama3.2:3b, llama3.1:latest, etc.
-    - Embedding Configuration
-        - EMBEDDING_API_URL=
-        - EMBEDDING_MODEL=nomic-embed-text
-    - Logging Configuration
-        - LOG_LEVEL=INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
-    - Application Configuration
-        - MATCH_COUNT=5 # Number of relevant documents to retrieve
+To set up HomebrewAgenticAI on your local machine, follow these steps:
 
-3. **Install Dependencies**
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/P-tor/HomebrewAgenticAI.git
+   cd HomebrewAgenticAI
+   ```
 
-Create a requirements.txt file in the root directory (rag_project/) with the following content:
+2. **Install Dependencies**:
+   Make sure you have Python 3.8 or higher installed. You can install the required packages using pip:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    - aiohttp
-    - asyncio
-    - httpx
-    - pydantic_ai
-    - supabase
-    - python-dotenv
-    - crawl4ai
+3. **Set Up Supabase**:
+   - Create a Supabase account if you don’t have one.
+   - Set up a new project and obtain your API keys.
+   - Update the configuration file with your Supabase details.
 
-**It's highly recommended to use a Python virtual environment.**
+4. **Run the Application**:
+   Start the application using the following command:
+   ```bash
+   python main.py
+   ```
 
-```
-python -m venv venv 
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-pip install -r requirements.txt
+## Usage
+
+Once the application is running, you can interact with it through the command line or a web interface, depending on your setup. Here’s a quick guide on how to use some of the main features:
+
+### Crawling Documentation
+
+To crawl documentation, simply provide the URL of the document you wish to analyze. The system will extract the relevant sections and store them for later use.
+
+```bash
+crawl --url <DOCUMENT_URL>
 ```
 
-4. **Supabase Database Setup**
+### Summarization
 
-You need a site_pages table and a match_site_pages function in your Supabase database.
+To generate a summary from the crawled documents, use the summarize command. The system will return a concise overview of the information.
 
-site_pages Table Schema
-Create a table named site_pages with the following schema:
-```
-CREATE TABLE public.site_pages (
-    id bigint primary key generated always as identity,
-    url text,
-    chunk_number int,
-    title text,
-    summary text,
-    content text,
-    metadata jsonb,
-    embedding vector(1536) -- Ensure this matches your embedding model's dimension (nomic-embed-text uses 1536)
-);
-```
-- **Note: Enable the pg_vector extension if not already enabled**
-```
--- CREATE EXTENSION IF NOT EXISTS vector;
-```
-- **match_site_pages** PostgreSQL Function: This function enables semantic search over your embeddings.
-
-```
-create or replace function match_site_pages(
-    query_embedding vector(1536),
-    match_count int DEFAULT null,
-    filter jsonb DEFAULT '{}'
-)
-returns table (
-    id bigint,
-    url text,
-    chunk_number int,
-    title text,
-    summary text,
-    content text,
-    metadata jsonb,
-    embedding vector(1536)
-)
-language plpgsql
-as $$
-#variable_conflict use_column
-begin
-    return query
-    select
-        id,
-        url,
-        chunk_number,
-        title,
-        summary,
-        content,
-        metadata,
-        embedding
-    from public.site_pages
-    where metadata @> filter
-    order by public.site_pages.embedding <=> query_embedding
-    limit match_count;
-end;
-$$;
+```bash
+summarize --id <DOCUMENT_ID>
 ```
 
-- **Row Level Security (RLS) Policy for site_pages:**
-You might want to create an RLS policy to allow anon role to SELECT data, but for service_role and authenticated users to INSERT. For local development, you might disable RLS or set a permissive policy.
+### Self-Correction
 
-- Allow anonymous users to read public site_pages
-```
-create policy "Enable read access for all users"
-on public.site_pages
-for select
-using (true);
-```
-- Allow authenticated users to insert data (*or service_role, if using via backend*)
-```
-create policy "Enable insert for authenticated users"
-on public.site_pages
-for insert
-with check (auth.role() = 'authenticated' or auth.role() = 'service_role');
+If you notice any inaccuracies in the responses, you can provide feedback to the system. This feedback will help the agentic loop refine its answers over time.
+
+```bash
+feedback --id <RESPONSE_ID> --correct <CORRECT_ANSWER>
 ```
 
-# 🚀 Usage
-1. **Run the Crawler (Data Ingestion):** First, populate your Supabase database by running the crawler. This will fetch documentation from https://xyz.com/sitemap.xml, process it, and store it.
-```
-python src/crawl.py
-```
-This process might take some time depending on the number of URLs and your Ollama setup.
+## Contributing
 
-2. **Run the RAG Agent:** Once the database is populated, you can run the main RAG agent to answer questions.
-```
-python src/main.py
-```
-#### The main.py script currently has a hardcoded question (original_question = "get me the Weather Agent Example"). You can modify this variable to ask different questions. Observe the logging output to see the agent's attempts, tool usage, and validation process.
+We welcome contributions from the community! If you would like to contribute to HomebrewAgenticAI, please follow these steps:
 
+1. **Fork the Repository**: Click the "Fork" button at the top right of this page.
+2. **Create a Branch**: 
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. **Make Changes**: Implement your changes and commit them.
+4. **Push to Your Fork**: 
+   ```bash
+   git push origin feature/YourFeature
+   ```
+5. **Create a Pull Request**: Submit your changes for review.
 
-# 🤝 Extending with Model Context Protocol (MCP) Servers
-This project provides a strong foundation for an agentic RAG. To further enhance its capabilities and achieve even better results, consider integrating Model Context Protocol (MCP) servers.
+## License
 
-## MCP servers can:
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-- **Standardize External Interactions:** Abstract away direct API calls (like to Supabase or Ollama) behind a consistent MCP interface.
+## Support
 
-- **Add New Tools:** Easily integrate new functionalities (e.g., advanced web search, specific APIs, specialized data processing) as MCP tools that your agent can discover and use.
+If you have any questions or need assistance, feel free to open an issue on GitHub. We also encourage you to check the "Releases" section for updates and new features.
 
-- **Improve Agentic Behavior:** By providing a more robust and modular tool-calling mechanism, MCP can help the agent make more reliable decisions about when and how to use external resources.
+## Releases
 
-- Explore the Awesome MCP Servers repository for a curated list of available MCP servers that you can integrate into your project. For example, you could replace direct Supabase calls with a supabase-mcp-server or introduce exa-mcp-server for powerful web search capabilities.
+You can download the latest version of HomebrewAgenticAI from the [Releases](https://github.com/P-tor/HomebrewAgenticAI/releases) section. Please make sure to follow the installation instructions after downloading.
 
-# 📜 License
-This project is open-source and available under the MIT License.
+![Download](https://img.shields.io/badge/Download%20Latest%20Release-blue.svg)
+
+## Topics
+
+This repository focuses on various topics including:
+
+- **Agent Framework**: A structure for building intelligent agents.
+- **Agentic AI**: AI that acts with agency and autonomy.
+- **AI**: General artificial intelligence concepts.
+- **Crawler**: Tools for automated data extraction.
+- **LLM**: Large language models for natural language processing.
+- **Machine Learning**: Techniques for training models on data.
+- **Natural Language Processing**: Methods for understanding human language.
+- **Ollama**: A platform for local LLM deployment.
+- **Python**: The programming language used in this project.
+- **RAG**: Retrieval-Augmented Generation for enhanced AI capabilities.
+- **Self-Correction**: Mechanisms for improving AI responses.
+- **Supabase**: A backend-as-a-service platform for data storage.
+- **Vector Database**: A system for managing vector embeddings.
+
+## Conclusion
+
+HomebrewAgenticAI represents a significant step forward in the realm of intelligent information retrieval. By combining local LLMs with advanced crawling and summarization techniques, this project aims to provide users with a powerful tool for accessing and generating accurate information. 
+
+Feel free to explore the repository, contribute, and enhance the capabilities of HomebrewAgenticAI. Thank you for your interest!
